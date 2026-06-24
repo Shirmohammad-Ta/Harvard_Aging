@@ -146,17 +146,43 @@ with tab1:
             
             with col1:
                 st.subheader("🧬 Basic Information")
+                
+                # Create base info dictionary (without Ensembl ID as text)
                 base_info = {
                     "Symbol": gene["symbol"],
                     "Full Name": gene.get("name", "Unknown"),
                     "GenAge ID": gene.get("genage_id", "Unknown"),
-                    "Ensembl ID": gene.get("ensembl_id", "Unknown"),
+                    # "Ensembl ID": gene.get("ensembl_id", "Unknown"),  # Removed - will show as link
                     "NCBI ID": gene.get("entrez_id", "Unknown"),
                     "Chromosome": gene.get("chromosome", "Unknown"),
                     "Location": f"{gene.get('start', '')} - {gene.get('end', '')}" if gene.get('start') else "Unknown",
                     "Reason in GenAge": gene.get("why", "Unknown")
                 }
                 st.json(base_info)
+                
+                # --- ADD HYPERLINKS HERE ---
+                st.markdown("---")
+                st.markdown("**🔗 External Links:**")
+                
+                # Ensembl link
+                ensembl_id = gene.get("ensembl_id")
+                if ensembl_id and ensembl_id != "Unknown":
+                    ensembl_url = f"https://useast.ensembl.org/Homo_sapiens/Gene/Summary?g={ensembl_id}"
+                    st.link_button("🧬 View on Ensembl", ensembl_url)
+                else:
+                    st.caption("Ensembl ID not available")
+                
+                # NCBI link
+                ncbi_id = gene.get("entrez_id")
+                if ncbi_id and ncbi_id != "Unknown" and ncbi_id != "None":
+                    ncbi_url = f"https://www.ncbi.nlm.nih.gov/gene/{ncbi_id}"
+                    st.link_button("🧬 View on NCBI", ncbi_url)
+                else:
+                    st.caption("NCBI ID not available")
+                
+                # GenAge link (optional - if you want to add)
+                genage_url = f"https://genomics.senescence.info/genes/entry.php?hgnc={gene['symbol']}"
+                st.link_button("📚 View on GenAge", genage_url)
             
             with col2:
                 st.subheader("📝 Description")
